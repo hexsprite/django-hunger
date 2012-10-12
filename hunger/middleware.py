@@ -48,6 +48,7 @@ class BetaMiddleware(object):
         self.redirect_url = getattr(settings, 'BETA_REDIRECT_URL', '/beta/')
         self.signup_views = getattr(settings, 'BETA_SIGNUP_VIEWS', [])
         self.signup_confirmation_view = getattr(settings, 'BETA_SIGNUP_CONFIRMATION_VIEW', '')
+        self.signup_confirmation_url = getattr(settings, 'BETA_SIGNUP_CONFIRMATION_URL', '')
         self.signup_url = getattr(settings, 'BETA_SIGNUP_URL', '/register/')
         self.allow_flatpages = getattr(settings, 'BETA_ALLOW_FLATPAGES', [])
 
@@ -88,10 +89,10 @@ class BetaMiddleware(object):
         if full_view_name in self.always_allow_views:
             return
 
-        if full_view_name == self.signup_confirmation_view:
+        if full_view_name == self.signup_confirmation_view or request.path == self.signup_confirmation_url:
             #signup completed - deactivate invitation code
             request.session['beta_complete'] = True
-            invite_used.send(sender=self.__class__, user=request.user, invitation_code=invitation_code)
+            # invite_used.send(sender=self.__class__, user=request.user, invitation_code=invitation_code)
             return
 
         if request.user.is_authenticated() and full_view_name not in self.signup_views:
