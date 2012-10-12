@@ -17,7 +17,7 @@ def beta_confirm(email, **kwargs):
 
     templates_folder = setting('BETA_EMAIL_TEMPLATES_DIR', 'hunger')
     templates_folder = os.path.join(templates_folder, '')
-    from_email = kwargs.get('from_email', None)
+    from_email = kwargs.get('from_email', 'noreply@nsextreme.com')
     if templates_folder == 'hunger':
         file_extension = 'email'
     else:
@@ -36,11 +36,11 @@ def beta_confirm(email, **kwargs):
     else:
         plaintext = get_template(os.path.join(templates_folder, 'beta_confirm.txt'))
         html = get_template(os.path.join(templates_folder, 'beta_confirm.html'))
-        subject, to = 'You requested an invite!', email
+        subject, to = 'NSExtreme Beta Confirmation', email
         text_content = plaintext.render(Context())
         html_content = html.render(Context())
         msg = EmailMultiAlternatives(subject, text_content, from_email, [to],
-                                     headers={'From': 'Mailer <%s>' % from_email})
+                                     headers={'From': 'NSExtreme <%s>' % from_email})
         msg.attach_alternative(html_content, "text/html")
         msg.send()
 
@@ -56,7 +56,7 @@ def beta_invite(email, code, **kwargs):
 
     templates_folder = setting('BETA_EMAIL_TEMPLATES_DIR', 'hunger')
     templates_folder = os.path.join(templates_folder, '')
-    from_email = kwargs.get('from_email', None)
+    from_email = kwargs.get('from_email', 'noreply@nsextreme.com')
     if templates_folder == 'hunger':
         file_extension = 'email'
     else:
@@ -75,10 +75,10 @@ def beta_invite(email, code, **kwargs):
         plaintext = get_template(os.path.join(templates_folder, 'beta_invite.txt'))
         html = get_template(os.path.join(templates_folder, 'beta_invite.html'))
 
-        subject, to = "Here is your invite", email
+        subject, to = "NSExtreme.com Beta Invite", email
         text_content = plaintext.render(context)
         html_content = html.render(context)
         msg = EmailMultiAlternatives(subject, text_content, from_email, [to],
-                                     headers={'From': 'Mailer <%s>' % from_email})
+                                     headers={'From': 'NSExtreme <%s>' % from_email})
         msg.attach_alternative(html_content, "text/html")
         msg.send()
