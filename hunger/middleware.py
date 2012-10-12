@@ -4,8 +4,14 @@ from hunger.models import InvitationCode
 from hunger.signals import invite_used
 from hunger.receivers import invitation_code_used
 
+import logging
+logger = logging.getLogger(__name__)
+
 #setup signals
 invite_used.connect(invitation_code_used)
+
+def error_log(s):
+    print s
 
 class BetaMiddleware(object):
     """
@@ -74,40 +80,53 @@ class BetaMiddleware(object):
             short_name = view_func.__name__
         full_view_name = '%s.%s' % (view_func.__module__, short_name)
 
+        print full_view_name
         #Check modules
         if self.always_allow_modules:
             whitelisted_modules += self.always_allow_modules
 
         #if view in module then ignore - except if view is signup confirmation
         if '%s' % view_func.__module__ in whitelisted_modules and not full_view_name == self.signup_confirmation_view:
+            error_log("whitelisted or signup confirmation view")
             return
 
         #Check views
         if full_view_name in self.never_allow_views:
+            error_log("never allow views")
             return HttpResponseRedirect(self.redirect_url)
 
         if full_view_name in self.always_allow_views:
+            error_log("always allow views")
             return
 
         if full_view_name == self.signup_confirmation_view or request.path == self.signup_confirmation_url:
             #signup completed - deactivate invitation code
+            error_log("signup complete")
             request.session['beta_complete'] = True
             # invite_used.send(sender=self.__class__, user=request.user, invitation_code=invitation_code)
             return
 
         if request.user.is_authenticated() and full_view_name not in self.signup_views:
+            error_log("user is authed")
             # User is logged in, or beta is not active, no need to check anything else.
             return
 
+        if full_view_name == 'registration.views.register' and not in_beta:
+            error_log("not in beta, trying to register")
+            return HttpResponseRedirect(self.signup_url)
+
         if full_view_name in self.signup_views and in_beta:
             #if beta code is valid and trying to register then let them through
+            error_log("has beta code trying to register")
             return
         else:
             # next_page = request.META.get('REQUEST_URI')
             next_page = request.path
             if in_beta:
-                return HttpResponseRedirect(self.signup_url + '?next=%s' % next_page)
+                error_log("redirect to signup")
+                return HttpResponseRedirect(getattr(settings, 'BETA_SIGNUP_ACCOUNT_URL', '/accounts/register'))
             else:
+                error_log("redirect to redirect url")
                 return HttpResponseRedirect(self.redirect_url + '?next=%s' % next_page)
 
     def process_response(self, request, response):

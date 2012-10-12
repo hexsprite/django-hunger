@@ -1,1 +1,1 @@
-Visit http://basejump.nsextreme.com:8000/{% url beta_verify_invite code %} to join the private beta.
+Visit http://basejump.nsextreme.com:8000{% url beta_verify_invite code %} to join the private beta.

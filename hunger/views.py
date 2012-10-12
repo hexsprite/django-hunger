@@ -39,7 +39,7 @@ def verify_invite(request, invitation_code):
         if not valid:
             return redirect('beta_used')
         else:
-            url = getattr(settings, 'BETA_SIGNUP_URL', '/register/')
+            url = getattr(settings, 'BETA_SIGNUP_ACCOUNT_URL', '/register/')
             response = redirect(url)
             response.set_cookie('invitation_code', invitation_code)
             return response
