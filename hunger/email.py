@@ -36,7 +36,7 @@ def beta_confirm(email, **kwargs):
     else:
         plaintext = get_template(os.path.join(templates_folder, 'beta_confirm.txt'))
         html = get_template(os.path.join(templates_folder, 'beta_confirm.html'))
-        subject, to = 'NSExtreme Beta Confirmation', email
+        subject, to = 'NSExtreme.com Beta Confirmation', email
         text_content = plaintext.render(Context())
         html_content = html.render(Context())
         msg = EmailMultiAlternatives(subject, text_content, from_email, [to],
