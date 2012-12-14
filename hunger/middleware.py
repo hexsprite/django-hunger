@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 invite_used.connect(invitation_code_used)
 
 def error_log(s):
-    print s
+    pass
 
 class BetaMiddleware(object):
     """
@@ -80,7 +80,6 @@ class BetaMiddleware(object):
             short_name = view_func.__name__
         full_view_name = '%s.%s' % (view_func.__module__, short_name)
 
-        print full_view_name
         #Check modules
         if self.always_allow_modules:
             whitelisted_modules += self.always_allow_modules
